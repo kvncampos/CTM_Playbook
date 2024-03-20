@@ -1,0 +1,57 @@
+---
+- hosts: localhost
+  tasks:
+  - name: "GET Request"
+    ansible.builtin.uri:
+      url: "http://127.0.0.1:5002/api/keys/all"
+      method: GET
+      validate_certs: no
+      body_format: json
+    delegate_to: localhost
+    register: get_data
+
+  - name: "Print Output"
+    # tags: never, all
+    debug:
+      var: get_data
+
+  - name: Parse JSON response and extract data
+    set_fact:
+      ctm_result: "{{ get_data.json }}"
+  
+  - name: ETL -> Relevant Data from GET Request
+    ansible.builtin.set_fact:
+    # Remove [*] if its not a list of dicts.
+      host_data:
+        # These are single items
+        creation_date: "{{ ctm_result | json_query('[*].createdAt') }}"
+        crypto_period: "{{ ctm_result | json_query('[*].completedAt') }}"
+        cluster: "{{ ctm_result | json_query('[*].DSM') }}"
+        hostname: "{{ ctm_result | json_query('[*].DSM') }}"
+        # environment: "{{ ctm_result | json_query('DSM') }}" # We need to derive using DSM value ?
+        # Nested in host data
+        os: "{{ ctm_result | json_query('[*].host.os') }}"
+        platform: "{{ ctm_result | json_query('[*].host.os') }}"
+        # Nested under host.agents -> Only Getting VTE
+        registration_status: "{{ ctm_result | json_query('[*].host.agents.VTE.registrationStatus') }}"
+        agent_version: "{{ ctm_result | json_query('[*].host.agents.VTE.version') }}"
+        # Nested under statuses data
+        guard_point_path: "{{ ctm_result | json_query('[*].statuses[].guardPoint.guardPath') }}"
+        key_type: "{{ ctm_result | json_query('[*].statuses[].guardPoint.guardPointType') }}"
+        enabled: "{{ ctm_result | json_query('[*].statuses[].guardPoint.enabled') }}"
+        client_operational_status: "{{ ctm_result | json_query('[*].statuses[].guardPoint.enabled') }}"
+        key_usage: "{{ ctm_result | json_query('[*].statuses[].guardPoint.guardStatus') }}"
+        guard_status: "{{ ctm_result | json_query('[*].statuses[].guardPoint.guardStatus') }}"
+        policy_type: "{{ ctm_result | json_query('[*].statuses[].guardPoint.policy.name') }}"
+  
+  # ------------- REMOVE EMPTY VALUES AND PRINT TO CONSOLE -------------
+  - name: Remove empty values from host_data
+    ansible.builtin.set_fact:
+      host_data_filtered: "{{ host_data | dict2items | selectattr('value', 'ne', '') | items2dict }}"
+  
+  - name: Print Out Data to Observe (Pre Modification)
+    # tags: never, clean
+    debug:
+      var: host_data_filtered
+  
+    
