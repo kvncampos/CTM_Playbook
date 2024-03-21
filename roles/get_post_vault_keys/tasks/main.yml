@@ -1,0 +1,33 @@
+---
+- name: "GET Request"
+  ansible.builtin.uri:
+    url: "http://127.0.0.1:5002/api/keys/all"
+    method: GET
+    validate_certs: no
+    body_format: json
+  delegate_to: localhost
+  register: get_data
+
+# - name: "Print Output"
+  # debug:
+    # var: get_data
+
+- name: Parse JSON response and extract data
+  set_fact:
+    ctm_result: "{{ get_data }}"
+
+- name: debugging 
+  debug:
+    var: ctm_result['json']
+
+- name: debugging Keys
+  debug:
+    msg: "{{ ctm_result['json'][0].completedAt }}"
+
+
+- name: Loop through each dictionary in ctm_result and send POST requests
+  ansible.builtin.include_tasks: send_post_requests.yml
+  loop: "{{ ctm_result['json'] }}"
+  loop_control:
+    loop_var: ctm_item
+  register: post_request_results

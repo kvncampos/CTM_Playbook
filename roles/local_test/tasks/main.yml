@@ -1,0 +1,140 @@
+---
+  - name: Simulate fetching data from Cipher Trust Manager
+    set_fact:
+      data:
+      # ---------- THIS IS SAMPLE FROM JSON OUTPUT list[{items}] ----------
+      - id: 1111
+        url: https://api.ciphertrustmanager.com/keys/1111
+        state: active
+        createdAt: 2024-03-20T12:00:00Z
+        completedAt: 2024-03-20T12:00:00Z
+        host:
+          id: 11111
+          url: https://api.ciphertrustmanager.com/hosts/11111
+          name: Example Host 1
+          description: This is an example host
+          os: Linux
+          osDistribution: Ubuntu
+          kernelVersion: 5.4.0
+          licenseType: Enterprise
+          agents:
+            VTE:
+              agentType: Endpoint
+              version: 7.1.1.1
+              registrationStatus: registered
+              locked: false
+              oneWayCommunicationEnabled: true
+            DB2:
+              agentType: Database
+              registrationStatus: registered
+              locked: false
+            VAE:
+              agentType: Endpoint
+              registrationStatus: registered
+              locked: false
+          lastSecurityUpdateAt: 2024-03-18T08:00:00Z
+          domainUrl: example1.com
+          port: 22
+          reSignHostSettings: true
+          allowedAdditionalSlots: true
+        statuses:
+          - guardPoint:
+              id: 1
+              url: https://api.ciphertrustmanager.com/guardpoints/1
+              guardPath: /path/to/guard
+              guardPointType: file
+              enabled: true
+              guardStatus: active
+              hostUrl: https://api.ciphertrustmanager.com/hosts/11111
+              policy:
+                id: 123
+                url: https://api.ciphertrustmanager.com/policies/123
+                name: Example Policy 1
+                domainUrl: example1.com
+                moreInfo: true
+              earlyAccess: false
+              efficientStorageDevice: true
+              idtCapableDevice: true
+        DSM: something@test.com
+      - id: 2222
+        url: https://api.ciphertrustmanager.com/keys/2222
+        state: inactive
+        createdAt: 2024-03-21T12:00:00Z
+        completedAt: 2024-03-25T12:00:00Z
+        host:
+          id: 22222
+          url: https://api.ciphertrustmanager.com/hosts/22222
+          name: Example Host 2
+          description: This is another example host
+          os: Windows
+          osDistribution: Server 2019
+          kernelVersion: 10.0.18363
+          licenseType: Standard
+          agents:
+            DB2:
+              agentType: Database
+              registrationStatus: registered
+              locked: false
+            VAE:
+              agentType: Endpoint
+              registrationStatus: registered
+              locked: false
+          lastSecurityUpdateAt: 2024-03-17T08:00:00Z
+          domainUrl: example2.com
+          port: 443
+          reSignHostSettings: false
+          allowedAdditionalSlots: false
+        statuses:
+          - guardPoint:
+              id: 2
+              url: https://api.ciphertrustmanager.com/guardpoints/2
+              guardPath: /path/to/another/guard
+              guardPointType: file
+              enabled: true
+              guardStatus: inactive
+              hostUrl: https://api.ciphertrustmanager.com/hosts/22222
+              policy:
+                id: 456
+                url: https://api.ciphertrustmanager.com/policies/456
+                name: Another Example Policy 2
+                domainUrl: example2.com
+                moreInfo: true
+              earlyAccess: false
+              efficientStorageDevice: true
+              idtCapableDevice: true
+        DSM: something2@test.com
+
+
+  - name: Loop through each dictionary in ctm_result and send POST requests
+    ansible.builtin.include_tasks: send_post_requests.yml
+    loop: "{{ data }}"
+    loop_control:
+      loop_var: ctm_item
+    register: post_request_results
+  
+  - name: Display output after each loop iteration
+    ansible.builtin.debug:
+      msg: "Result of iteration {{ item.index }}: {{ item }}"
+    loop: "{{ post_request_results.results }}"
+
+
+# 
+  # - name: Loop through each dictionary in ctm_result and send POST requests
+    # ansible.builtin.include_tasks: send_post_requests.yml
+    # loop: "{{ ctm_result }}"
+    # loop_control:
+      # loop_var: ctm_item
+    # register: post_request_results
+  # 
+  # - name: Display output after each loop iteration
+    # ansible.builtin.debug:
+      # msg: "Result of iteration {{ item.index }}: {{ item }}"
+    # loop: "{{ post_request_results.results }}"
+ 
+  # - name: Remove empty values from host_data
+    # ansible.builtin.set_fact:
+      # # host_data_filtered: "{{ host_data | dict2items | selectattr('value', 'ne', '') | items2dict }}"
+# 
+  # - name: Print Out Data to Observe (Pre Modification)
+    # debug:
+      # var: host_data_filtered

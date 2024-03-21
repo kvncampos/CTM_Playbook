@@ -1,0 +1,53 @@
+---
+# tasks file for send_post_requests.yml
+
+- name: "POST Request"
+  ansible.builtin.uri:
+    url: "http://127.0.0.1:5002/api/keys/all"
+    method: POST
+    validate_certs: no
+    body_format: json
+    body: |
+      {
+        "creation_date": "{{ ctm_item.createdAt }}",
+        "crypto_period": "{{ ctm_item.completedAt }}",
+        "cluster": "{{ ctm_item.DSM }}",
+        "hostname": "{{ ctm_item.DSM }}",
+        "os": "{{ ctm_item.host.os }}",
+        "platform": "{{ ctm_item.host.os }}",
+        "registration_status": "{{ ctm_item.host.agents.VTE.registrationStatus | default(None) }}",
+        "agent_version": "{{ ctm_item.host.agents.VTE.version | default(None) }}",
+        "guard_point_path": "{{ ctm_item.statuses[0].guardPoint.guardPath }}",
+        "key_type": "{{ ctm_item.statuses[0].guardPoint.guardPointType }}",
+        "enabled": "{{ ctm_item.statuses[0].guardPoint.enabled }}",
+        "client_operational_status": "{{ ctm_item.statuses[0].guardPoint.enabled }}",
+        "key_usage": "{{ ctm_item.statuses[0].guardPoint.guardStatus }}",
+        "guard_status": "{{ ctm_item.statuses[0].guardPoint.guardStatus }}",
+        "policy_type": "{{ ctm_item.statuses[0].guardPoint.policy.name }}"
+      }
+  register: posted_data
+
+- name: Printing POST STATUS
+  debug:
+    var: posted_data.json.message
+    
+- name: Printing POST DATA
+  debug:
+    msg: |
+      {
+        "creation_date": "{{ ctm_item.createdAt }}",
+        "crypto_period": "{{ ctm_item.completedAt }}",
+        "cluster": "{{ ctm_item.DSM }}",
+        "hostname": "{{ ctm_item.DSM }}",
+        "os": "{{ ctm_item.host.os }}",
+        "platform": "{{ ctm_item.host.os }}",
+        "registration_status": "{{ ctm_item.host.agents.VTE.registrationStatus | default(None) }}",
+        "agent_version": "{{ ctm_item.host.agents.VTE.version | default(None) }}",
+        "guard_point_path": "{{ ctm_item.statuses[0].guardPoint.guardPath }}",
+        "key_type": "{{ ctm_item.statuses[0].guardPoint.guardPointType }}",
+        "enabled": "{{ ctm_item.statuses[0].guardPoint.enabled }}",
+        "client_operational_status": "{{ ctm_item.statuses[0].guardPoint.enabled }}",
+        "key_usage": "{{ ctm_item.statuses[0].guardPoint.guardStatus }}",
+        "guard_status": "{{ ctm_item.statuses[0].guardPoint.guardStatus }}",
+        "policy_type": "{{ ctm_item.statuses[0].guardPoint.policy.name }}"
+      }

@@ -1,0 +1,28 @@
+---
+# tasks file for test_ctm
+- name: "POST Request TEST"
+  # ansible.builtin.uri:
+    # url: "http://127.0.0.1:5002/api/keys/all"
+    # method: POST
+    # validate_certs: no
+    # body_format: json
+    # body: "{{ host_data }}"
+  vars:
+    host_data:
+      # These are single items
+      creation_date: "{{ ctm_item.createdAt }}"
+      crypto_period: "{{ ctm_item.completedAt }}"
+      cluster: "{{ ctm_item.DSM }}"
+      hostname: "{{ ctm_item.DSM }}"
+      os: "{{ ctm_item.host.os }}"
+      platform: "{{ ctm_item.host.os }}"
+      registration_status: "{{ ctm_item.host.agents.VTE.registrationStatus }}"
+      agent_version: "{{ ctm_item.host.agents.VTE.version }}"
+      guard_point_path: "{{ ctm_item.statuses | json_query('[].guardPoint.guardPath') }}"
+      key_type: "{{ ctm_item.statuses | json_query('[].guardPoint.guardPointType') }}"
+      enabled: "{{ ctm_item.statuses | json_query('[].guardPoint.enabled') }}"
+      client_operational_status: "{{ ctm_item.statuses | json_query('[].guardPoint.enabled') }}"
+      key_usage: "{{ ctm_item.statuses | json_query('[].guardPoint.guardStatus') }}"
+      guard_status: "{{ ctm_item.statuses | json_query('[].guardPoint.guardStatus') }}"
+      policy_type: "{{ ctm_item.statuses | json_query('[].guardPoint.policy.name') }}"
+  register: posted_data
