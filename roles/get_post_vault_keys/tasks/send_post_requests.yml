@@ -4,28 +4,29 @@
 - name: Set DSM name
   set_fact:
     env: "{{ ctm_item.DSM }}"
-# 
-# - name: Debug DSM
+
+# - name: Debug DSM value
   # debug:
-    # var:
-      # env
+    # var: env
 
-- name: Set environment based on env value
+- name: Run Python script to set environment
+  ansible.builtin.command: python3 roles/get_post_vault_keys/scripts/env_setter.py "{{ env }}"
+  register: handler_output
+
+# - name: Debug handler output
+  # debug:
+    # var: handler_output.stdout
+# 
+- name: Debug environment value
   set_fact:
-    environment: >
-      {% if 'prod' in env.lower() %}
-        PROD
-      {% elif 'uat' in env.lower() %}
-        UAT
-      {% elif 'dev' in env.lower() %}
-        DEV
-      {% elif 'lab' in env.lower() %}
-        LAB
-      {% else %}
-        DID_NOT_READ
-      {% endif %}
+    format_env: "{{ handler_output.stdout }}"
 
-- name: "POST Request Setup"
+- name: Debug handler output
+  debug:
+    var: format_env
+
+
+- name: "POST Request"
   ansible.builtin.uri:
     url: "http://127.0.0.1:5002/api/keys/all"
     method: POST
@@ -35,7 +36,7 @@
       {
         "creation_date": "{{ ctm_item.createdAt }}",
         "crypto_period": "{{ ctm_item.completedAt }}",
-        "environment": "{{ environment }}",
+        "environment": "{{ format_env }}",
         "cluster": "{{ ctm_item.DSM }}",
         "hostname": "{{ ctm_item.DSM }}",
         "os": "{{ ctm_item.host.os }}",
@@ -50,6 +51,7 @@
         "guard_status": "{{ ctm_item.statuses[0].guardPoint.guardStatus }}",
         "policy_type": "{{ ctm_item.statuses[0].guardPoint.policy.name }}"
       }
+
   register: posted_data
 
 - name: Printing POST STATUS
@@ -62,7 +64,7 @@
       {
         "creation_date": "{{ ctm_item.createdAt }}",
         "crypto_period": "{{ ctm_item.completedAt }}",
-        "environment": "{{ environment }}",
+        "environment": "{{ format_env }}",
         "cluster": "{{ ctm_item.DSM }}",
         "hostname": "{{ ctm_item.DSM }}",
         "os": "{{ ctm_item.host.os }}",

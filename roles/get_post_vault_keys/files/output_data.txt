@@ -5,10 +5,18 @@ included: /Users/kvncampos/Ansible/CTM_Playbook/roles/get_post_vault_keys/tasks/
 TASK [get_post_vault_keys : Set DSM name] **********************************************************************************************************************
 ok: [localhost]
 
-TASK [get_post_vault_keys : Set environment based on env value] ************************************************************************************************
+TASK [get_post_vault_keys : Run Python script to set environment] **********************************************************************************************
+changed: [localhost]
+
+TASK [get_post_vault_keys : Debug environment value] ***********************************************************************************************************
 ok: [localhost]
 
-TASK [get_post_vault_keys : POST Request Setup] ****************************************************************************************************************
+TASK [get_post_vault_keys : Debug handler output] **************************************************************************************************************
+ok: [localhost] => {
+    "format_env": "PROD"
+}
+
+TASK [get_post_vault_keys : POST Request] **********************************************************************************************************************
 ok: [localhost]
 
 TASK [get_post_vault_keys : Printing POST STATUS] **************************************************************************************************************
@@ -25,7 +33,7 @@ ok: [localhost] => {
         "creation_date": "2024-03-20T12:00:00Z",
         "crypto_period": "2024-03-20T12:00:00Z",
         "enabled": "True",
-        "environment": "[]",
+        "environment": "PROD",
         "guard_point_path": "/path/to/guard",
         "guard_status": "active",
         "hostname": "something-prod-name@name.com",
@@ -41,10 +49,18 @@ ok: [localhost] => {
 TASK [get_post_vault_keys : Set DSM name] **********************************************************************************************************************
 ok: [localhost]
 
-TASK [get_post_vault_keys : Set environment based on env value] ************************************************************************************************
+TASK [get_post_vault_keys : Run Python script to set environment] **********************************************************************************************
+changed: [localhost]
+
+TASK [get_post_vault_keys : Debug environment value] ***********************************************************************************************************
 ok: [localhost]
 
-TASK [get_post_vault_keys : POST Request Setup] ****************************************************************************************************************
+TASK [get_post_vault_keys : Debug handler output] **************************************************************************************************************
+ok: [localhost] => {
+    "format_env": "LAB"
+}
+
+TASK [get_post_vault_keys : POST Request] **********************************************************************************************************************
 ok: [localhost]
 
 TASK [get_post_vault_keys : Printing POST STATUS] **************************************************************************************************************
@@ -61,7 +77,7 @@ ok: [localhost] => {
         "creation_date": "2024-03-21T12:00:00Z",
         "crypto_period": "2024-03-25T12:00:00Z",
         "enabled": "True",
-        "environment": "[]",
+        "environment": "LAB",
         "guard_point_path": "/path/to/another/guard",
         "guard_status": "inactive",
         "hostname": "something-lab-name@name.com",
@@ -74,5 +90,4 @@ ok: [localhost] => {
     }
 }
 
-PLAY RECAP *****************************************************************************************************************************************************
-localhost                  : ok=17   changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+PLAY RECAP ************************************************************************************************************************
