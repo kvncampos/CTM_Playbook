@@ -4,29 +4,28 @@
 - name: Set DSM name
   set_fact:
     env: "{{ ctm_item.DSM }}"
-
-- name: Debug DSM value
-  debug:
-    var: ctm_item.DSM
+# 
+# - name: Debug DSM
+  # debug:
+    # var:
+      # env
 
 - name: Set environment based on env value
   set_fact:
     environment: >
-      {% set dsm_lower = ctm_item.DSM | lower %}
-      {% if 'prod' in dsm_lower %}
+      {% if 'prod' in env.lower() %}
         PROD
-      {% elif 'uat' in dsm_lower %}
+      {% elif 'uat' in env.lower() %}
         UAT
-      {% elif 'dev' in dsm_lower %}
+      {% elif 'dev' in env.lower() %}
         DEV
-      {% elif 'lab' in dsm_lower %}
+      {% elif 'lab' in env.lower() %}
         LAB
       {% else %}
         DID_NOT_READ
       {% endif %}
-      
 
-- name: "POST Request"
+- name: "POST Request Setup"
   ansible.builtin.uri:
     url: "http://127.0.0.1:5002/api/keys/all"
     method: POST
