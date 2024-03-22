@@ -5,20 +5,26 @@
   set_fact:
     env: "{{ ctm_item.DSM }}"
 
-- name: Match for environment key
+- name: Debug DSM value
+  debug:
+    var: ctm_item.DSM
+
+- name: Set environment based on env value
   set_fact:
-    environment: >-
-      {% if 'prod' in env %}
+    environment: >
+      {% set dsm_lower = ctm_item.DSM | lower %}
+      {% if 'prod' in dsm_lower %}
         PROD
-      {% elif 'uat' in env %}
+      {% elif 'uat' in dsm_lower %}
         UAT
-      {% elif 'dev' in env %}
+      {% elif 'dev' in dsm_lower %}
         DEV
-      {% elif 'lab' in env %}
+      {% elif 'lab' in dsm_lower %}
         LAB
       {% else %}
-        ''
+        DID_NOT_READ
       {% endif %}
+      
 
 - name: "POST Request"
   ansible.builtin.uri:
