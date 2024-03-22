@@ -6,6 +6,12 @@ app = Flask(__name__)
 # Load data from ctm_data.json file
 with open('docs/ctm_data.json', 'r') as file:
     ctm_data = json.load(file)
+    
+    
+# Route for /keys/all
+@app.route('/', methods=['GET'])
+def home():
+    return jsonify({"hello": "world"})
 
 # Route for /keys/all
 @app.route('/api/keys/all', methods=['GET', 'POST'])

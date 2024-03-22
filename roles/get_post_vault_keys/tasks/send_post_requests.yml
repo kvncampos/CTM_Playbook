@@ -1,6 +1,25 @@
 ---
 # tasks file for send_post_requests.yml
 
+- name: Set DSM name
+  set_fact:
+    env: "{{ ctm_item.DSM }}"
+
+- name: Match for environment key
+  set_fact:
+    environment: >-
+      {% if 'prod' in env %}
+        PROD
+      {% elif 'uat' in env %}
+        UAT
+      {% elif 'dev' in env %}
+        DEV
+      {% elif 'lab' in env %}
+        LAB
+      {% else %}
+        ''
+      {% endif %}
+
 - name: "POST Request"
   ansible.builtin.uri:
     url: "http://127.0.0.1:5002/api/keys/all"
@@ -11,6 +30,7 @@
       {
         "creation_date": "{{ ctm_item.createdAt }}",
         "crypto_period": "{{ ctm_item.completedAt }}",
+        "environment": "{{ environment }}",
         "cluster": "{{ ctm_item.DSM }}",
         "hostname": "{{ ctm_item.DSM }}",
         "os": "{{ ctm_item.host.os }}",
@@ -37,6 +57,7 @@
       {
         "creation_date": "{{ ctm_item.createdAt }}",
         "crypto_period": "{{ ctm_item.completedAt }}",
+        "environment": "{{ environment }}",
         "cluster": "{{ ctm_item.DSM }}",
         "hostname": "{{ ctm_item.DSM }}",
         "os": "{{ ctm_item.host.os }}",
