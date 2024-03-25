@@ -17,14 +17,38 @@
   # debug:
     # var: handler_output.stdout
 # 
-- name: Debug environment value
+- name: Get environment value
   set_fact:
     format_env: "{{ handler_output.stdout }}"
 
-- name: Debug handler output
-  debug:
-    var: format_env
+# - name: Debug handler output
+#   debug:
+#     var: format_env
 
+# - name: Loop through each item in ctm_item statuses
+#   set_fact:
+#     guard_point_data: |
+#       "guard_point_path": "{{ item.guardPoint.guardPath }}",
+#       "key_type": "{{ item.guardPoint.guardPointType }}",
+#       "enabled": "{{ item.guardPoint.enabled }}",
+#       "client_operational_status": "{{ item.guardPoint.enabled }}",
+#       "key_usage": "{{ item.guardPoint.guardStatus }}",
+#       "guard_status": "{{ item.guardPoint.guardStatus }}",
+#       "policy_type": "{{ item.guardPoint.policy.name }}"
+#   loop: "{{ ctm_item.statuses }}"
+
+# - name: Debug GuardPoint Database
+#   debug:
+#     msg: |
+#       {
+#         "guard_point_path": "{{ ctm_item.statuses[0].guardPoint.guardPath }}",
+#         "key_type": "{{ ctm_item.statuses[0].guardPoint.guardPointType }}",
+#         "enabled": "{{ ctm_item.statuses[0].guardPoint.enabled }}",
+#         "client_operational_status": "{{ ctm_item.statuses[0].guardPoint.enabled }}",
+#         "key_usage": "{{ ctm_item.statuses[0].guardPoint.guardStatus }}",
+#         "guard_status": "{{ ctm_item.statuses[0].guardPoint.guardStatus }}",
+#         "policy_type": "{{ ctm_item.statuses[0].guardPoint.policy.name }}"
+#       }
 
 - name: "POST Request"
   ansible.builtin.uri:
@@ -44,20 +68,55 @@
         "platform": "{{ ctm_item.host.os }}",
         "registration_status": "{{ ctm_item.host.agents.VTE.registrationStatus | default(None) }}",
         "agent_version": "{{ ctm_item.host.agents.VTE.version | default(None) }}",
-        "guard_point_path": "{{ ctm_item.statuses[0].guardPoint.guardPath }}",
-        "key_type": "{{ ctm_item.statuses[0].guardPoint.guardPointType }}",
-        "enabled": "{{ ctm_item.statuses[0].guardPoint.enabled }}",
-        "client_operational_status": "{{ ctm_item.statuses[0].guardPoint.enabled }}",
-        "key_usage": "{{ ctm_item.statuses[0].guardPoint.guardStatus }}",
-        "guard_status": "{{ ctm_item.statuses[0].guardPoint.guardStatus }}",
-        "policy_type": "{{ ctm_item.statuses[0].guardPoint.policy.name }}"
+        "guard_point_path": [
+          {% for status in ctm_item.statuses %}
+          "{{ status.guardPoint.guardPath }}"
+          {% if not loop.last %},{% endif %}
+          {% endfor %}
+        ],
+        "key_type": [
+          {% for status in ctm_item.statuses %}
+          "{{ status.guardPoint.guardPointType }}"
+          {% if not loop.last %},{% endif %}
+          {% endfor %}
+        ],
+        "enabled": [
+          {% for status in ctm_item.statuses %}
+          "{{ status.guardPoint.enabled }}"
+          {% if not loop.last %},{% endif %}
+          {% endfor %}
+        ],
+        "client_operational_status": [
+          {% for status in ctm_item.statuses %}
+          "{{ status.guardPoint.enabled }}"
+          {% if not loop.last %},{% endif %}
+          {% endfor %}
+        ],
+        "key_usage": [
+          {% for status in ctm_item.statuses %}
+          "{{ status.guardPoint.guardStatus }}"
+          {% if not loop.last %},{% endif %}
+          {% endfor %}
+        ],
+        "guard_status": [
+          {% for status in ctm_item.statuses %}
+          "{{ status.guardPoint.guardStatus }}"
+          {% if not loop.last %},{% endif %}
+          {% endfor %}
+        ],
+        "policy_type": [
+          {% for status in ctm_item.statuses %}
+          "{{ status.guardPoint.policy.name }}"
+          {% if not loop.last %},{% endif %}
+          {% endfor %}
+        ]
       }
 
   register: posted_data
 
-- name: Printing POST STATUS
-  debug:
-    var: posted_data.json.message
+# - name: Printing POST STATUS
+#   debug:
+#     var: posted_data.json.message
     
 - name: Printing POST DATA
   debug:
@@ -65,6 +124,7 @@
       {
         "creation_date": "{{ ctm_item.createdAt }}",
         "crypto_period": "{{ ctm_item.completedAt }}",
+        "key_label": "{{ ctm_item.labels.key_label }}",
         "environment": "{{ format_env }}",
         "cluster": "{{ ctm_item.DSM }}",
         "hostname": "{{ ctm_item.DSM }}",
@@ -72,11 +132,46 @@
         "platform": "{{ ctm_item.host.os }}",
         "registration_status": "{{ ctm_item.host.agents.VTE.registrationStatus | default(None) }}",
         "agent_version": "{{ ctm_item.host.agents.VTE.version | default(None) }}",
-        "guard_point_path": "{{ ctm_item.statuses[0].guardPoint.guardPath }}",
-        "key_type": "{{ ctm_item.statuses[0].guardPoint.guardPointType }}",
-        "enabled": "{{ ctm_item.statuses[0].guardPoint.enabled }}",
-        "client_operational_status": "{{ ctm_item.statuses[0].guardPoint.enabled }}",
-        "key_usage": "{{ ctm_item.statuses[0].guardPoint.guardStatus }}",
-        "guard_status": "{{ ctm_item.statuses[0].guardPoint.guardStatus }}",
-        "policy_type": "{{ ctm_item.statuses[0].guardPoint.policy.name }}"
+        "guard_point_path": [
+          {% for status in ctm_item.statuses %}
+          "{{ status.guardPoint.guardPath }}"
+          {% if not loop.last %},{% endif %}
+          {% endfor %}
+        ],
+        "key_type": [
+          {% for status in ctm_item.statuses %}
+          "{{ status.guardPoint.guardPointType }}"
+          {% if not loop.last %},{% endif %}
+          {% endfor %}
+        ],
+        "enabled": [
+          {% for status in ctm_item.statuses %}
+          "{{ status.guardPoint.enabled }}"
+          {% if not loop.last %},{% endif %}
+          {% endfor %}
+        ],
+        "client_operational_status": [
+          {% for status in ctm_item.statuses %}
+          "{{ status.guardPoint.enabled }}"
+          {% if not loop.last %},{% endif %}
+          {% endfor %}
+        ],
+        "key_usage": [
+          {% for status in ctm_item.statuses %}
+          "{{ status.guardPoint.guardStatus }}"
+          {% if not loop.last %},{% endif %}
+          {% endfor %}
+        ],
+        "guard_status": [
+          {% for status in ctm_item.statuses %}
+          "{{ status.guardPoint.guardStatus }}"
+          {% if not loop.last %},{% endif %}
+          {% endfor %}
+        ],
+        "policy_type": [
+          {% for status in ctm_item.statuses %}
+          "{{ status.guardPoint.policy.name }}"
+          {% if not loop.last %},{% endif %}
+          {% endfor %}
+        ]
       }

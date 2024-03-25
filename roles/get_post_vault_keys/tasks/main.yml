@@ -20,9 +20,9 @@
   debug:
     var: ctm_result['json']
 
-- name: debugging Keys
-  debug:
-    msg: "{{ ctm_result['json'][0].completedAt }}"
+# - name: debugging Keys
+#   debug:
+#     msg: "{{ ctm_result['json'][0].completedAt }}"
 
 
 - name: Loop through each dictionary in ctm_result and send POST requests

@@ -1,47 +1,36 @@
-TASK [get_post_vault_keys : Loop through each dictionary in ctm_result and send POST requests] ********************************************************************************
-included: /Users/kvncampos/Ansible/CTM_Playbook/roles/get_post_vault_keys/tasks/send_post_requests.yml for localhost => (item={'DSM': 'something-prod-name@name.com', 'completedAt': '2024-03-20T12:00:00Z', 'createdAt': '2024-03-20T12:00:00Z', 'host': {'agents': {'DB2': {'agentType': 'Database', 'locked': False, 'registrationStatus': 'registered'}, 'VAE': {'agentType': 'Endpoint', 'locked': False, 'registrationStatus': 'registered'}, 'VTE': {'agentType': 'Endpoint', 'locked': False, 'oneWayCommunicationEnabled': True, 'registrationStatus': 'registered', 'version': '7.1.1.1'}}, 'allowedAdditionalSlots': True, 'description': 'This is an example host', 'domainUrl': 'example1.com', 'id': 11111, 'kernelVersion': '5.4.0', 'lastSecurityUpdateAt': '2024-03-18T08:00:00Z', 'licenseType': 'Enterprise', 'name': 'Example Host 1', 'os': 'Linux', 'osDistribution': 'Ubuntu', 'port': 22, 'reSignHostSettings': True, 'url': 'https://api.ciphertrustmanager.com/hosts/11111'}, 'id': 1111, 'labels': {'environment': 'development', 'key_label': 'PLACEHOLDER_NA_v1'}, 'state': 'active', 'statuses': [{'guardPoint': {'earlyAccess': False, 'efficientStorageDevice': True, 'enabled': True, 'guardPath': '/path/to/guard', 'guardPointType': 'file', 'guardStatus': 'active', 'hostUrl': 'https://api.ciphertrustmanager.com/hosts/11111', 'id': 1, 'idtCapableDevice': True, 'policy': {'domainUrl': 'example1.com', 'id': 123, 'moreInfo': True, 'name': 'Example Policy 1', 'url': 'https://api.ciphertrustmanager.com/policies/123'}, 'url': 'https://api.ciphertrustmanager.com/guardpoints/1'}}], 'url': 'https://api.ciphertrustmanager.com/keys/1111'})
-included: /Users/kvncampos/Ansible/CTM_Playbook/roles/get_post_vault_keys/tasks/send_post_requests.yml for localhost => (item={'DSM': 'something-lab-name@name.com', 'completedAt': '2024-03-25T12:00:00Z', 'createdAt': '2024-03-21T12:00:00Z', 'host': {'agents': {'DB2': {'agentType': 'Database', 'locked': False, 'registrationStatus': 'registered'}, 'VAE': {'agentType': 'Endpoint', 'locked': False, 'registrationStatus': 'registered'}}, 'allowedAdditionalSlots': False, 'description': 'This is another example host', 'domainUrl': 'example2.com', 'id': 22222, 'kernelVersion': '10.0.18363', 'lastSecurityUpdateAt': '2024-03-17T08:00:00Z', 'licenseType': 'Standard', 'name': 'Example Host 2', 'os': 'Windows', 'osDistribution': 'Server 2019', 'port': 443, 'reSignHostSettings': False, 'url': 'https://api.ciphertrustmanager.com/hosts/22222'}, 'id': 2222, 'labels': {'environment': 'development', 'key_label': 'PLACEHOLDER_NA_v1'}, 'state': 'inactive', 'statuses': [{'guardPoint': {'earlyAccess': False, 'efficientStorageDevice': True, 'enabled': True, 'guardPath': '/path/to/another/guard', 'guardPointType': 'file', 'guardStatus': 'inactive', 'hostUrl': 'https://api.ciphertrustmanager.com/hosts/22222', 'id': 2, 'idtCapableDevice': True, 'policy': {'domainUrl': 'example2.com', 'id': 456, 'moreInfo': True, 'name': 'Another Example Policy 2', 'url': 'https://api.ciphertrustmanager.com/policies/456'}, 'url': 'https://api.ciphertrustmanager.com/guardpoints/2'}}], 'url': 'https://api.ciphertrustmanager.com/keys/2222'})
-
-TASK [get_post_vault_keys : Set DSM name] *************************************************************************************************************************************
-ok: [localhost]
-
-TASK [get_post_vault_keys : Run Python script to set environment] *************************************************************************************************************
-changed: [localhost]
-
-TASK [get_post_vault_keys : Debug environment value] **************************************************************************************************************************
-ok: [localhost]
-
-TASK [get_post_vault_keys : Debug handler output] *****************************************************************************************************************************
-ok: [localhost] => {
-    "format_env": "PROD"
-}
-
-TASK [get_post_vault_keys : POST Request] *************************************************************************************************************************************
-ok: [localhost]
-
-TASK [get_post_vault_keys : Printing POST STATUS] *****************************************************************************************************************************
-ok: [localhost] => {
-    "posted_data.json.message": "Success"
-}
-
 TASK [get_post_vault_keys : Printing POST DATA] *******************************************************************************************************************************
 ok: [localhost] => {
     "msg": {
         "agent_version": "7.1.1.1",
-        "client_operational_status": "True",
+        "client_operational_status": [
+            "True"
+        ],
         "cluster": "something-prod-name@name.com",
         "creation_date": "2024-03-20T12:00:00Z",
         "crypto_period": "2024-03-20T12:00:00Z",
-        "enabled": "True",
+        "enabled": [
+            "True"
+        ],
         "environment": "PROD",
-        "guard_point_path": "/path/to/guard",
-        "guard_status": "active",
+        "guard_point_path": [
+            "/path/to/guard"
+        ],
+        "guard_status": [
+            "active"
+        ],
         "hostname": "something-prod-name@name.com",
-        "key_type": "file",
-        "key_usage": "active",
+        "key_label": "PLACEHOLDER_NA_v1",
+        "key_type": [
+            "file"
+        ],
+        "key_usage": [
+            "active"
+        ],
         "os": "Linux",
         "platform": "Linux",
-        "policy_type": "Example Policy 1",
+        "policy_type": [
+            "Example Policy 1"
+        ],
         "registration_status": "registered"
     }
 }
@@ -52,43 +41,120 @@ ok: [localhost]
 TASK [get_post_vault_keys : Run Python script to set environment] *************************************************************************************************************
 changed: [localhost]
 
-TASK [get_post_vault_keys : Debug environment value] **************************************************************************************************************************
+TASK [get_post_vault_keys : Get environment value] ****************************************************************************************************************************
 ok: [localhost]
-
-TASK [get_post_vault_keys : Debug handler output] *****************************************************************************************************************************
-ok: [localhost] => {
-    "format_env": "LAB"
-}
 
 TASK [get_post_vault_keys : POST Request] *************************************************************************************************************************************
 ok: [localhost]
-
-TASK [get_post_vault_keys : Printing POST STATUS] *****************************************************************************************************************************
-ok: [localhost] => {
-    "posted_data.json.message": "Success"
-}
 
 TASK [get_post_vault_keys : Printing POST DATA] *******************************************************************************************************************************
 ok: [localhost] => {
     "msg": {
         "agent_version": "",
-        "client_operational_status": "True",
+        "client_operational_status": [
+            "True",
+            "True"
+        ],
         "cluster": "something-lab-name@name.com",
         "creation_date": "2024-03-21T12:00:00Z",
         "crypto_period": "2024-03-25T12:00:00Z",
-        "enabled": "True",
+        "enabled": [
+            "True",
+            "True"
+        ],
         "environment": "LAB",
-        "guard_point_path": "/path/to/another/guard",
-        "guard_status": "inactive",
+        "guard_point_path": [
+            "/path/to/another/guard",
+            "/path/to/another/guard"
+        ],
+        "guard_status": [
+            "inactive",
+            "inactive"
+        ],
         "hostname": "something-lab-name@name.com",
-        "key_type": "file",
-        "key_usage": "inactive",
+        "key_label": "PLACEHOLDER_NA_v1",
+        "key_type": [
+            "file",
+            "file"
+        ],
+        "key_usage": [
+            "inactive",
+            "inactive"
+        ],
         "os": "Windows",
         "platform": "Windows",
-        "policy_type": "Another Example Policy 2",
+        "policy_type": [
+            "Another Example Policy 2",
+            "Another Example Policy 22"
+        ],
+        "registration_status": ""
+    }
+}
+
+TASK [get_post_vault_keys : Set DSM name] *************************************************************************************************************************************
+ok: [localhost]
+
+TASK [get_post_vault_keys : Run Python script to set environment] *************************************************************************************************************
+changed: [localhost]
+
+TASK [get_post_vault_keys : Get environment value] ****************************************************************************************************************************
+ok: [localhost]
+
+TASK [get_post_vault_keys : POST Request] *************************************************************************************************************************************
+ok: [localhost]
+
+TASK [get_post_vault_keys : Printing POST DATA] *******************************************************************************************************************************
+ok: [localhost] => {
+    "msg": {
+        "agent_version": "",
+        "client_operational_status": [
+            "True",
+            "True",
+            "True"
+        ],
+        "cluster": "something-uat-name@name.com",
+        "creation_date": "2024-03-21T12:00:00Z",
+        "crypto_period": "2024-03-25T12:00:00Z",
+        "enabled": [
+            "True",
+            "True",
+            "True"
+        ],
+        "environment": "UAT",
+        "guard_point_path": [
+            "/path/to/another/guard",
+            "/path/to/another/guard",
+            "/path/to/another/guard"
+        ],
+        "guard_status": [
+            "inactive",
+            "inactive",
+            "inactive"
+        ],
+        "hostname": "something-uat-name@name.com",
+        "key_label": "PLACEHOLDER_NA_v1",
+        "key_type": [
+            "file",
+            "file",
+            "file"
+        ],
+        "key_usage": [
+            "inactive",
+            "inactive",
+            "inactive"
+        ],
+        "os": "Windows",
+        "platform": "Windows",
+        "policy_type": [
+            "Another Example Policy 3",
+            "Another Example Policy 33",
+            "Another Example Policy 333"
+        ],
         "registration_status": ""
     }
 }
 
 PLAY RECAP ********************************************************************************************************************************************************************
-localhost                  : ok=21   changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+localhost                  : ok=22   changed=3    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+(.venv) kvncampos@Kevins-MacBook-Pro CTM_Playbook % 
