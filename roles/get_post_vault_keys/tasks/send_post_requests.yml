@@ -36,6 +36,7 @@
       {
         "creation_date": "{{ ctm_item.createdAt }}",
         "crypto_period": "{{ ctm_item.completedAt }}",
+        "key_label": "{{ ctm_item.labels.key_label }}",
         "environment": "{{ format_env }}",
         "cluster": "{{ ctm_item.DSM }}",
         "hostname": "{{ ctm_item.DSM }}",
